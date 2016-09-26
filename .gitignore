@@ -23,6 +23,9 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+.idea/
+bank_bets_sql.sql
+chat.py
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>BankBets -- RuneScape Gambling Made Easy</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ionicons.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+
+    <!-- Js -->
+    <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/min/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.counterup.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+
+  </head>
+  <body>
+
+    <!-- Header Start -->
+  <header>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <!-- header Nav Start -->
+          <nav class="navbar navbar-default">
+            <div class="container-fluid">
+              <!-- Brand and toggle get grouped for better mobile display -->
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="dice">
+                  <img src="{{ url_for('static', filename='img/suh.png') }}" alt="Logo">
+                </a>
+              </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                  <ul class="nav navbar-nav navbar-right">
+                    <li><a href="index">Dice</a></li>
+                    <li><a href="#" id="cashier">Cashier</a></li>
+                    <li><a href="#" id="display_login">Login</a></li>
+                  </ul>
+                </div><!-- /.navbar-collapse -->
+              </div><!-- /.container-fluid -->
+            </nav>
+          </div>
+        </div>
+      </div>
+    </header><!-- header close -->
+
+    <div class="outside">
+    <div class="form">
+      <div align="right" style="margin-bottom: 1em;"><a href="#" id="close_tray"><i class="fa fa-lg fa-times"></i></a></div>
+      <ul class="tab-group">
+        <li class="tab active"><a href="#signup">Sign Up</a></li>
+        <li class="tab"><a href="#login">Log In</a></li>
+      </ul>
+
+      <div class="tab-content">
+        <div id="signup">
+          <h1>Sign Up for Free</h1>
+          <p id="taken" style="display: none; color: white;">That username/email is already in use! Please try again.</p>
+          <form action="/register_user" method="post" id="register_form">
+
+            <div class="field-wrap">
+              <label>
+                Username<span class="req">*</span>
+              </label>
+              <input type="text" name="username" required="required" id="username" autocomplete="off" />
+            </div>
+
+          <div class="field-wrap">
+            <label>
+              Password (8+ characters)<span class="req">*</span>
+            </label>
+            <input type="password" name="pass1" required="required" id="pass1" autocomplete="off"/>
+          </div>
+
+          <div class="field-wrap">
+            <label>
+              Confirm Password (8+ characters)<span class="req">*</span>
+            </label>
+            <input type="password" name="pass2" required="required" id="pass2" autocomplete="off"/>
+          </div>
+
+          <div class="field-wrap">
+            <label>
+              Email Address<span class="req">*</span>
+            </label>
+            <input type="email" name="email" required="required" id="email" autocomplete="off"/>
+          </div>
+
+          <p id="success_register" style="display: none; color: white;">Successfully registered a new account! Log in to play at BankBets.</p>
+          <p id="fail_register" style="display: none; color: white;">Something went wrong. Please try again or <a href="contact">contact us</a>.</p>
+          <p id="invalid_pass" style="display: none; color: white;">Passwords do not match. Please try again!</p>
+          <p id="short_pass" style="display: none; color: white;">Passwords is too short! 8+ characters is required. Please try again!</p>
+          <p id="short_user" style="display: none; color: white;">Username is too short! 3+ characters is required. Please try again!</p>
+          <button type="submit" id="make_bank" class="button button-block"/>Make Bank</button>
+
+          </form>
+
+        </div>
+
+        <div id="login">
+          <h1>Welcome Back to BankBets!</h1>
+
+          <form action="/check_login" id="check_login" method="post">
+
+            <div class="field-wrap">
+            <label>
+              Username<span class="req">*</span>
+            </label>
+            <input type="text" name="userlogin" id="userlogin" required="required" autocomplete="off"/>
+          </div>
+
+          <div class="field-wrap">
+            <label>
+              Password<span class="req">*</span>
+            </label>
+            <input type="password" name="userpass" id="userpass" required="required" autocomplete="off"/>
+          </div>
+
+          <p class="forgot"><a href="#" id="forgot_pass">Forgot Password?</a></p>
+          <p id="invalid" style="display: none; color: white;">Username/Password was incorrect. Please try again.</p>
+          <p id="success_login" style="display: none; color: white;">You have successfully logged in.</p>
+          <button class="button button-block"/>Log In</button>
+
+          </form>
+
+        </div>
+
+      </div><!-- tab-content -->
+
+    </div> <!-- /form -->
+    </div>
+
+    <div id="live-chat" style="display: none;">
+
+		<header class="clearfix">
+
+			<a href="#" class="chat-close">x</a>
+
+			<h4>Cashier</h4>
+
+		</header>
+
+		<div class="chat">
+
+			<div class="chat-history" id="cashier_history">
+
+				<div class="chat-message clearfix">
+
+					<img src="{{ url_for('static', filename='img/cashier.png' ) }}" alt="" width="32" height="32">
+
+					<div class="chat-message-content clearfix">
+
+						<span class="chat-time">13:35</span>
+
+						<h5>Cashier</h5>
+
+						<p>Thank you for using BankBets! I will be assisting you shortly. Please let me know some information. Are you making a deposit or a withdraw?
+                        Are you cashing in/out with EOC or 07 gold? I hope to make this a quick and easy transaction for us.</p>
+
+					</div> <!-- end chat-message-content -->
+
+				</div> <!-- end chat-message -->
+
+
+				<hr>
+
+			</div> <!-- end chat-history -->
+
+			<p class="chat-feedback"></p>
+
+			<form action="cashier_message" method="post" id="cashier_new_message">
+              <input type="text" placeholder="Type your message…" name="cashier_msg" required="required">
+			</form>
+
+		</div> <!-- end chat -->
+
+	</div> <!-- end live-chat -->
+
+    <!-- Slider Start -->
+    <section id="slider">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-10 col-md-offset-2">
+            <div class="block">
+              <h1 class="animated fadeInUp">RUNESCAPE GAMBLING <br> MADE EASY</h1>
+              <p class="animated fadeInUp">BankBets was founded for one reason. To make gambling great again. </br> Help us help you fulfill your RuneScape dreams of wealth and glory.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Wrapper Start -->
+    <section id="intro">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-7 col-sm-12">
+            <div class="block">
+              <div class="section-title">
+                <h2>About Us</h2>
+                <p>We all remember RuneScape's glory days. We miss those times. We miss the constant thrill of gambling in RuneScape. Many sites have tried and failed to capture our love of gambling in RuneScape. That's why we are here to help. </p>
+              </div>
+              <p>We all have come to appreciate the various RuneScape gambling sites available out on the market. But they are missing honesty. Many of <b>those sites are rigged</b>. BankBets uses a <b>provably fair system</b> to verify each and every bet placed on our site. We don't allow any such behavior here.   </p>
+            </div>
+          </div><!-- .col-md-7 close -->
+          <div class="col-md-5 col-sm-12">
+            <div class="block">
+              <img src="{{ url_for('static', filename='img/provable.jpg') }}" alt="Img">
+            </div>
+          </div><!-- .col-md-5 close -->
+        </div>
+      </div>
+    </section>
+
+    <!-- footer Start -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="footer-manu">
+              <ul>
+                <li><a href="#">Contact us</a></li>
+                <li><a href="howitworks">How it works</a></li>
+                <li><a href="support">Support</a></li>
+                <li><a href="terms">Terms</a></li>
+              </ul>
+            </div>
+            <p>Copyright &copy2016; Design & Developed by 6LD/Dave. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  <!--Start of Zopim Live Chat Script-->
+<script type="text/javascript">
+window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
+d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
+_.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute("charset","utf-8");
+$.src="//v2.zopim.com/?4F9OI5FJhhYWFI6KBQP5AihGCxis1BBD";z.t=+new Date;$.
+type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
+</script>
+<!--End of Zopim Live Chat Script-->
+
+    </body>
+</html>
