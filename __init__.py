@@ -77,6 +77,10 @@ def request_withdraw():
     else:
         return redirect('/')
 
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
 
 
 def getLogIn():
