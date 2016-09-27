@@ -26,6 +26,7 @@ var/
 .idea/
 bank_bets_sql.sql
 chat.py
+git_tut.txt
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
