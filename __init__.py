@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, redirect, request, flash, jsonify, url_for
-from database import connection, register, checkUser, checkLogin
+from database import connection, register, checkUser, checkLogin, getBalance, requestDeposit, requestWithdraw, getPreviousRequests
 import os
 from MySQLdb import escape_string as escaper
 
@@ -8,7 +8,7 @@ app.secret_key = os.urandom(24)
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html', loggedinstatus=getLogIn(), loggedinli=getLogInLi())
 
 @app.route('/index')
 def index():
@@ -37,6 +37,68 @@ def check_login():
         session['user'] = username
         return "login"
     return "fail"
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
+
+
+@app.route('/cashier')
+def cashier():
+    return render_template('cashier.html', loggedin=getLogInStatus(), loggedinli=getLogInLi(), balanceacc=getBalance(getUser()), previous_requests = getPreviousRequests(getUser()))
+
+@app.route('/request_deposit', methods=['POST'])
+def request_deposit():
+    if getLogInStatus():
+        game_type = escaper(request.form['game_type'])
+        amount = escaper(request.form['amount'])
+        if game_type[0] == 'O' or game_type[0] == 'o':
+            type = "Old School"
+        else:
+            type = "RS3"
+        unique_deposit = requestDeposit(getUser(), type, amount)
+        return render_template('requested.html', request_id=unique_deposit, loggedin=getLogInStatus(), type_request='deposit', game_type = type, requested_gold = amount)
+    else:
+        return redirect('/')
+
+@app.route('/request_withdraw', methods=['POST'])
+def request_withdraw():
+    if getLogInStatus():
+        game_type = escaper(request.form['game_type'])
+        amount = escaper(request.form['amount'])
+        if game_type[0] == 'O' or game_type[0] == 'o':
+            type = "Old School"
+        else:
+            type = "RS3"
+        unique_deposit = requestWithdraw(getUser(), type, amount)
+        return render_template('requested.html', request_id=unique_deposit, loggedin=getLogInStatus(),
+                               type_request='withdrawl', game_type=type, requested_gold=amount)
+    else:
+        return redirect('/')
+
+
+
+def getLogIn():
+    if 'user' not in session:
+        return ""
+    return "display: none;"
+
+def getLogInLi():
+    if 'user' not in session:
+        return '<li><a href="#" id="display_login">Login</a></li>'
+    return '<li><a href="/logout" id="logout_">Logout (' + session['user'] + ')</a></li>'
+
+def getLogInStatus():
+    if 'user' not in session:
+        return False
+    return True
+
+def getUser():
+    if 'user' not in session:
+        return 'OFFLINE1111111111111111111111111111111111111111111111'
+    else:
+        return session['user']
 
 if __name__ == "__main__":
     app.run()

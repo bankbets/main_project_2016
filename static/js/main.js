@@ -114,7 +114,10 @@ $(document).ready(function(){
                     $("#invalid").show();
                 }else{
                     $("#success_login").show();
-                    location.reload();
+                    setTimeout(function () {
+                        console.log("Refreshing.");
+                        location.reload();
+                    }, 1500);
                 }
             }
         });

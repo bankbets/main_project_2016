@@ -37,6 +37,21 @@ a:hover {
   z-index: 1000;
 }
 
+
+.form_cash {
+  background: rgba(19, 35, 47, 0.9);
+  padding: 40px;
+  max-width: 600px;
+  width: 100%;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+  margin: 5% auto;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin-top: 0px;
+}
+
 .tab-group {
   list-style: none;
   padding: 0;
@@ -79,6 +94,10 @@ h1 {
   color: #ffffff;
   font-weight: 300;
   margin: 0 0 40px;
+}
+h4{
+    text-align: center;
+    color: #ffffff;
 }
 
 label {
