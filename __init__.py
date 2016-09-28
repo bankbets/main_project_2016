@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, redirect, request, flash, jsonify, url_for
-from database import connection, register, checkUser, checkLogin, getBalance, requestDeposit, requestWithdraw, getPreviousRequests
+from database import connection, register, checkUser, checkLogin, getBalance, requestDeposit, requestWithdraw, getPreviousRequests, isAdmin, getPendingDeposits, getInfoOnKey, makeDeposit, getPendingWithdraws, makeWithdrawl
 import os
 from MySQLdb import escape_string as escaper
 
@@ -43,6 +43,10 @@ def logout():
     session.clear()
     return redirect('/')
 
+@app.route('/dice')
+def dice():
+    return redirect('/')
+
 
 @app.route('/cashier')
 def cashier():
@@ -62,6 +66,22 @@ def request_deposit():
     else:
         return redirect('/')
 
+@app.route('/admin/submit_Deposit', methods=['POST'])
+def submit_deposit():
+    if getLogInStatus():
+        if isAdmin(session['user']) == True:
+            depkey = request.form['depkey']
+            depuser = request.form['depuser']
+            amt = request.form['deposit_amt']
+            type = request.form['game_type']
+            rsname = request.form['rs_name']
+            makeDeposit(depkey, depuser, amt, type, getUser(), rsname)
+            return redirect('/admin/manage')
+        else:
+            return render_template('404.html')
+    else:
+        return redirect('/')
+
 @app.route('/request_withdraw', methods=['POST'])
 def request_withdraw():
     if getLogInStatus():
@@ -77,11 +97,57 @@ def request_withdraw():
     else:
         return redirect('/')
 
+@app.route('/admin/submit_Withdrawl', methods=['POST'])
+def submit_withdrawl():
+    if getLogInStatus():
+        if isAdmin(session['user']) == True:
+            depkey = request.form['depkey']
+            depuser = request.form['depuser']
+            amt = request.form['deposit_amt']
+            type = request.form['game_type']
+            rsname = request.form['rs_name']
+            makeWithdrawl(depkey, depuser, amt, type, getUser(), rsname)
+            return redirect('/admin/manage')
+        else:
+            return render_template('404.html')
+    else:
+        return redirect('/')
+
 @app.route('/terms')
 def terms():
     return render_template('terms.html')
 
+@app.route('/grab_info/<item>/<t>', methods=['GET'])
+def grab_info(item, t):
+    key = item
+    if t == 'd':
+        allInfo = getInfoOnKey(key, getUser(), 'd')
+        thisType = "Deposit"
+    else:
+        allInfo = getInfoOnKey(key, getUser(), 'w')
+        thisType = "Withdrawl"
+    return render_template("deposit_request.html", item = allInfo, type = thisType)
 
+@app.route('/admin')
+def admin_page():
+    if getLogInStatus() == False:
+        return render_template('404.html')
+    if isAdmin(session['user']) == False:
+        return render_template('404.html')
+    return render_template('admin.html', notify = 0, pic = 'admin', username = getUser())
+
+@app.errorhandler(404)
+def error404(e):
+    return render_template('404.html')
+
+@app.route('/admin/manage')
+def admin_manage():
+    if getLogInStatus() == False:
+        return render_template('404.html')
+    if isAdmin(session['user']) == False:
+        return render_template('404.html')
+    user = getUser()
+    return render_template('manage_accounts.html', notify = 0, pic = 'admin', username = user, pendingdeposits = getPendingDeposits(user), pendingwithdraws = getPendingWithdraws(user))
 
 def getLogIn():
     if 'user' not in session:
@@ -91,7 +157,7 @@ def getLogIn():
 def getLogInLi():
     if 'user' not in session:
         return '<li><a href="#" id="display_login">Login</a></li>'
-    return '<li><a href="/logout" id="logout_">Logout (' + session['user'] + ')</a></li>'
+    return '<li><a href="/logout" id="logout_">Logout (' + session['user'] + ')</a></li><li><a href="#">Balance: ' + str(getBalance(session['user'])) + ' Tokens</a></li>'
 
 def getLogInStatus():
     if 'user' not in session:

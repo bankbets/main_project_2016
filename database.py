@@ -106,3 +106,96 @@ def getPreviousRequests(user):
         conn.close()
         print(allRequests)
         return allRequests
+
+def isAdmin(user):
+    c, conn = connection()
+    userid = getUserId(user)
+    x = c.execute("SELECT type FROM member_accounts WHERE personID= (%s)", [int(userid)])
+    if int(x) == 0:
+        return False
+    row = c.fetchone()
+    if row[0] == "A":
+        return True
+    return False
+
+def getPendingDeposits(user):
+    if isAdmin(user):
+        c, conn = connection()
+        x = c.execute("SELECT a.*, b.username FROM deposit_requests a JOIN member_accounts b WHERE a.status='Open' AND a.personID = b.personID")
+        row = c.fetchone()
+        allReqs = []
+        while row is not None:
+            closeup = "<button type='button' onclick='openReq(\"" + row[4] + "\")'>Fulfill</button>"
+            currReq = dict(game=row[3], date=row[2], key=row[4], amt=row[1], status=row[5], requestuser=row[6], closeup=closeup)
+            allReqs.append(currReq)
+            row = c.fetchone()
+        c.close()
+        conn.close()
+        return allReqs
+    else:
+        return []
+
+def getPendingWithdraws(user):
+    if isAdmin(user):
+        c, conn = connection()
+        x = c.execute("SELECT a.*, b.username FROM withdraw_requests a JOIN member_accounts b WHERE a.status='Open' AND a.personID = b.personID")
+        row = c.fetchone()
+        allReqs = []
+        while row is not None:
+            closeup = "<button type='button' onclick='closeReq(\"" + row[4] + "\")'>Fulfill</button>"
+            currReq = dict(game=row[3], date=row[2], key=row[4], amt=row[1], status=row[5], requestuser=row[6], closeup=closeup)
+            allReqs.append(currReq)
+            row = c.fetchone()
+        c.close()
+        conn.close()
+        return allReqs
+    else:
+        return []
+
+def getInfoOnKey(key, user, t):
+    if isAdmin(user):
+        c, conn = connection()
+        if t == 'd':
+            x = c.execute("SELECT a.*, b.* FROM deposit_requests a JOIN member_accounts b WHERE a.request_key = %s AND a.personID = b.personID",
+                [escaper(key)])
+        else:
+            x = c.execute("SELECT a.*, b.* FROM withdraw_requests a JOIN member_accounts b WHERE a.request_key = %s AND a.personID = b.personID",
+                [escaper(key)])
+        if int(x) == 0:
+            return []
+        row = c.fetchone()
+        return [row[1], row[2], row[3], row[4], row[5], row[7], row[8], row[12]]
+    else:
+        return []
+
+def makeDeposit(depkey, depuser, amt, type, user, rsname):
+    if isAdmin(user) == True:
+        c, conn = connection()
+        c.execute("UPDATE deposit_requests SET status='Closed' WHERE request_key = %s", [escaper(depkey)])
+        userid = getUserId(depuser)
+        cashierid = getUserId(user)
+        ts = time.time()
+        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        c.execute("INSERT INTO fulfilled_deposits (personID, cashierID, rsacc, amount, game_type, date_time, request_key) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                  [int(userid), int(cashierid), escaper(rsname), escaper(amt), escaper(type), escaper(st), escaper(depkey)])
+        c.execute("UPDATE member_accounts SET balance = balance + %s WHERE username = %s", [int(amt), escaper(depuser)])
+        conn.commit()
+        c.close()
+        conn.close()
+    return
+
+def makeWithdrawl(depkey, depuser, amt, type, user, rsname):
+    if isAdmin(user) == True:
+        c, conn = connection()
+        c.execute("UPDATE withdraw_requests SET status='Closed' WHERE request_key = %s", [escaper(depkey)])
+        userid = getUserId(depuser)
+        cashierid = getUserId(user)
+        ts = time.time()
+        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        c.execute("INSERT INTO fulfilled_withdrawls (personID, cashierID, rsacc, amount, game_type, date_time, request_key) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                  [int(userid), int(cashierid), escaper(rsname), escaper(amt), escaper(type), escaper(st), escaper(depkey)])
+        c.execute("UPDATE member_accounts SET balance = balance - %s WHERE username = %s", [int(amt), escaper(depuser)])
+        conn.commit()
+        c.close()
+        conn.close()
+    return

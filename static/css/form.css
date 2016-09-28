@@ -32,6 +32,7 @@ a:hover {
   display: block;
   position: fixed;
   margin: 5% auto;
+  margin-top: 1em;
   left: 0;
   right: 0;
   z-index: 1000;

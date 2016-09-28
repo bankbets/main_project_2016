@@ -78,8 +78,8 @@
     <div class="form_cash">
       <h1>Balance: <b>{{balanceacc}} Tokens</b></h1>
       <h4>Rates:</h4>
-      <h4>1M RS3 <-> 100 Tokens</h4>
-      <h4>1M Old School <-> 500 Tokens</h4>
+      <h4>1M RS3 <-> 10 Tokens</h4>
+      <h4>1M Old School <-> 50 Tokens</h4>
       <ul class="tab-group">
         <li class="tab active"><a href="#deposit">Deposit</a></li>
         <li class="tab"><a href="#withdraw">Withdraw</a></li>
@@ -90,11 +90,11 @@
           <h1>Deposit Into BankBets</h1>
           <form action="/request_deposit" method="post" id="deposit_form">
 
-            <div class="field-wrap">
-              <label>
-                RS3/Old School<span class="req">*</span>
-              </label>
-              <input type="text" name="game_type" required="required" id="game_type_deposit" autocomplete="off" />
+            <div class="field-wrap" align="center">
+              <select name="game_type" required="required" id="game_select">
+                <option value="rs3">RS3</option>
+                <option value="os">Old School</option>
+              </select>
             </div>
 
             <div class="field-wrap">
@@ -116,16 +116,16 @@
 
           <form action="/request_withdraw" id="withdraw_form" method="post">
 
-            <div class="field-wrap">
-              <label>
-                RS3/Old School<span class="req">*</span>
-              </label>
-              <input type="text" name="game_type" required="required" id="game_type_withdraw" autocomplete="off" />
+            <div class="field-wrap" align="center">
+              <select name="game_type" required="required" id="game_select_withdraw">
+                <option value="rs3">RS3</option>
+                <option value="os">Old School</option>
+              </select>
             </div>
 
             <div class="field-wrap">
               <label>
-                Amount (in tokens)<span class="req">*</span>
+                Amount (in M)<span class="req">*</span>
               </label>
               <input type="text" name="amount" required="required" id="amount_withdraw" autocomplete="off" />
             </div>
