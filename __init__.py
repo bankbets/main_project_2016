@@ -1,6 +1,7 @@
 from flask import Flask, render_template, session, redirect, request, flash, jsonify, url_for
 from database import connection, register, checkUser, checkLogin, getBalance, requestDeposit, requestWithdraw, getPreviousRequests, isAdmin, getPendingDeposits, getInfoOnKey, makeDeposit, getPendingWithdraws, makeWithdrawl
 import os
+from dice import roll
 from MySQLdb import escape_string as escaper
 
 app = Flask(__name__)
@@ -45,7 +46,7 @@ def logout():
 
 @app.route('/dice')
 def dice():
-    return redirect('/')
+    return render_template('dice.html', loggedin=getLogInStatus(), balanceacc=getBalance(getUser()), loggedinli=getLogInLi())
 
 
 @app.route('/cashier')
