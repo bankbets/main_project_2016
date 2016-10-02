@@ -1,9 +1,10 @@
 from flask import Flask, render_template, session, redirect, request, flash, jsonify, url_for
 from database import connection, register, checkUser, checkLogin, getBalance, requestDeposit, requestWithdraw, \
     getPreviousRequests, isAdmin, getPendingDeposits, getInfoOnKey, makeDeposit, getPendingWithdraws, makeWithdrawl, \
-    checkBalance, insertBet
+    checkBalance, insertBet, getBet
 import os
 from dice import roll
+import hashlib, uuid
 from MySQLdb import escape_string as escaper
 
 app = Flask(__name__)
@@ -51,17 +52,21 @@ def rollem():
     amt = request.form['wager_amt']
     odds = request.form['odds']
     if checkBalance(getUser(), amt) == False:
-        return amt
+        return "not_enough"
     rollres = roll(getUser(), amt)
     if rollres > 54:
-        newbal = insertBet(getUser(), amt, rollres, "W")
+        option = int(amt)
+        insertBet(getUser(), amt, rollres, "W", option)
     else:
-        newbal = insertBet(getUser(), amt, rollres, "L")
-    return newbal
+        option = 0 - int(amt)
+        insertBet(getUser(), amt, rollres, "L", option)
+    newbal = getBalance(getUser())
+    bet = getBet(getUser())
+    return jsonify(newbal = str(newbal),  option = str(option), bet= bet[0], time = bet[3], user = getUser(), amt_total = bet[2], rolled = bet[4], profit = bet[6])
 
 @app.route('/dice')
 def dice():
-    return render_template('dice.html', loggedin=getLogInStatus(), balanceacc=getBalance(getUser()), loggedinli=getLogInLi())
+    return render_template('dice.html', loggedin=getLogInStatus(), balanceacc=getBalance(getUser()), loggedinli=getLogInLi(), rand = uuid.uuid4().hex)
 
 
 @app.route('/cashier')

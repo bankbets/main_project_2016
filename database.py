@@ -206,12 +206,13 @@ def checkBalance(user, amt):
         return True
     return False
 
-def insertBet(user, amt, roll, res):
+def insertBet(user, amt, roll, res, prof):
     userid = getUserId(user)
     c, conn = connection()
+    amt = escaper(amt)
     ts = time.time()
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-    c.execute("INSERT INTO fulfilled_bets (personID, amount, date_time, roll, result) VALUES (%s, %s, %s, %s, %s)", [int(userid), escaper(amt), escaper(st), escaper(roll), escaper(res)])
+    c.execute("INSERT INTO fulfilled_bets (personID, amount, date_time, roll, res, profit) VALUES (%s, %s, %s, %s, %s, %s)", [int(userid), int(amt), escaper(st), int(roll), escaper(res), escaper(str(prof))])
     if res == "W":
         c.execute("UPDATE member_accounts SET balance = balance + %s WHERE personID = %s", [int(escaper(amt)), int(userid)])
     else:
@@ -219,4 +220,15 @@ def insertBet(user, amt, roll, res):
                   [int(escaper(amt)), int(userid)])
     conn.commit()
     conn.close()
-    return getBalance(user)
+    return
+
+def getBet(user):
+    userid = getUserId(escaper(user))
+    c, conn = connection()
+    x = c.execute("select * from fulfilled_bets where personid=%s order by betID desc limit 1", [int(userid)])
+    if int(x) == 0:
+        conn.close()
+        return []
+    row = c.fetchone()
+    conn.close()
+    return row

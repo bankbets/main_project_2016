@@ -10,6 +10,9 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="{{ url_for('static', filename='js/dice-page.js') }}"></script>
 
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
 </head>
 <body>
     <header>
@@ -99,11 +102,19 @@
                       <hr>
                     </div>
                   </div>
+                  <div class="col-sm-12">
+                      <div class="form-group">
+                      <p class="lead">
+                        <strong>Client Seed:</strong>
+                      </p>
+                      <input type="text" value="{{rand}}" class="form-control input-lg" id="client_seed">
+                    </div>
+                  </div>
                   <div>
                     <div class="col-sm-6">
                       <div>
                         <span class="lead" style="font-weight:bold;">Profit: </span>
-                        <span class="lead" style="color:#39b54a;">+1.00</span>
+                        <span class="lead win" id="prof">+1.00</span>
                       </div>
                     </div>
                     <div class="col-sm-6">
@@ -124,18 +135,19 @@
                   <a href="/index" class="btn btn-lg btn-block btn-success">Login to Play</a>
                   {% endif %}
                   {% if loggedin == True %}
-                  <div class="col-md-6">
-                    <b><p id="balance_new">Balance: {{ balanceacc }}</p></b>
-                  </div>
+                  <b><p id="balance_new">Balance: {{ balanceacc }}</p></b>
                   <div class="col-md-6">
                     <button class="btn btn-lg btn-block btn-success" id="roll_dice">Roll</button>
                   </div>
                   {% endif %}
                 </div>
+                <div class="col-mid-12" align="center">
+                  <h4 id="not_enough_bal" style="display: none;">Insufficient balance! Please see <a href="cashier">cashier</a></h4>
+                </div>
               </div>
             </div>
             </div>
-            <div class="text-center"">
+            <div class="text-center">
 
             </div>
           </div>
@@ -183,11 +195,10 @@
         </ul>
       </div>
       <div>
-        <table class="table">
+        <table class="table" id="betstable">
           <thead>
           <tr>
             <th >ID</th>
-            <th>Time</th>
             <th>User</th>
             <th>Wager</th>
             <th class="text-right">Target</th>

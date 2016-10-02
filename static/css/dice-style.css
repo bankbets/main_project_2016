@@ -78,3 +78,11 @@ body {
     background-color: #767676;
     background-image: none;
 }
+
+.win{
+    color:#39b54a;
+}
+
+.lose{
+    color:#ff0000;
+}
