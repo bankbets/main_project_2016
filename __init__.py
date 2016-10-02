@@ -50,19 +50,21 @@ def logout():
 @app.route('/roll_dice', methods=['POST'])
 def rollem():
     amt = request.form['wager_amt']
+    client_seed = request.form['client_seed']
     odds = request.form['odds']
     if checkBalance(getUser(), amt) == False:
         return "not_enough"
-    rollres = roll(getUser(), amt)
-    if rollres > 54:
-        option = int(amt)
-        insertBet(getUser(), amt, rollres, "W", option)
-    else:
-        option = 0 - int(amt)
-        insertBet(getUser(), amt, rollres, "L", option)
+    for i in range(1, 100000):
+        rollres = roll(getUser(), amt, client_seed)
+        if rollres[0] > 54:
+            option = int(amt)
+            insertBet(getUser(), amt, rollres[0], rollres[1], rollres[2], client_seed, "W", option)
+        else:
+            option = 0 - int(amt)
+            insertBet(getUser(), amt, rollres[0], rollres[1], rollres[2], client_seed, "L", option)
     newbal = getBalance(getUser())
     bet = getBet(getUser())
-    return jsonify(newbal = str(newbal),  option = str(option), bet= bet[0], time = bet[3], user = getUser(), amt_total = bet[2], rolled = bet[4], profit = bet[6])
+    return jsonify(newbal = str(newbal),  option = str(option), bet= bet[0], time = bet[3], user = getUser(), amt_total = bet[2], rolled = bet[4], profit = bet[6], s_seed = rollres[1])
 
 @app.route('/dice')
 def dice():

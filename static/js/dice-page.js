@@ -44,11 +44,11 @@ $(document).ready(function(){
                         $("#balance_new").html("Balance: " + data.newbal);
                         if(data.option > 0){
                             $("#prof").addClass("win").removeClass("lose");
-                            betstable.row.add([data.bet, data.user, data.amt_total, "54", data.rolled, data.profit]).order([0, 'desc']).draw(false).nodes().to$().addClass('win');
+                            betstable.row.add([data.bet, data.user, data.amt_total, "54", data.rolled, data.profit, data.s_seed]).order([0, 'desc']).draw(false).nodes().to$().addClass('win');
                             $("#prof").html("+" + data.option);
                         }else{
                             $("#prof").addClass("lose").removeClass("win");
-                            betstable.row.add([data.bet, data.user, data.amt_total, "54", data.rolled, data.profit]).order([0, 'desc']).draw(false).nodes().to$().addClass('lose');
+                            betstable.row.add([data.bet, data.user, data.amt_total, "54", data.rolled, data.profit, data.s_seed]).order([0, 'desc']).draw(false).nodes().to$().addClass('lose');
                             $("#prof").html(data.option);
                         }
                     }

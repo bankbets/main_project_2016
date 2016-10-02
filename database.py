@@ -206,13 +206,13 @@ def checkBalance(user, amt):
         return True
     return False
 
-def insertBet(user, amt, roll, res, prof):
+def insertBet(user, amt, roll, s_seed, f_seed, c_seed, res, prof):
     userid = getUserId(user)
     c, conn = connection()
     amt = escaper(amt)
     ts = time.time()
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-    c.execute("INSERT INTO fulfilled_bets (personID, amount, date_time, roll, res, profit) VALUES (%s, %s, %s, %s, %s, %s)", [int(userid), int(amt), escaper(st), int(roll), escaper(res), escaper(str(prof))])
+    c.execute("INSERT INTO fulfilled_bets (personID, amount, date_time, roll, res, profit, client_seed, server_seed, hashed_val) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", [int(userid), int(amt), escaper(st), int(roll), escaper(res), escaper(str(prof)), escaper(c_seed), escaper(s_seed), escaper(f_seed)])
     if res == "W":
         c.execute("UPDATE member_accounts SET balance = balance + %s WHERE personID = %s", [int(escaper(amt)), int(userid)])
     else:
