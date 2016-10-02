@@ -1,8 +1,14 @@
 <html><head>
-  <title>Untitled Dice</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>BankBets -- RuneScape Gambling Dice</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="{{ url_for('static', filename='css/dice-style.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="{{ url_for('static', filename='js/dice-page.js') }}"></script>
 
 </head>
 <body>
@@ -83,7 +89,7 @@
                         <strong>Multiplier:</strong>
                       </p>
                       <div class="input-group" >
-                        <input type="text" value="2.00" class="form-control input-lg">
+                        <input type="text" value="2.00" class="form-control input-lg" id="odds_mult">
                         <span class="input-group-addon">x</span>
                       </div>
                     </div>
@@ -109,95 +115,122 @@
                   </div>
                 </div>
               </div>
-              <div class="panel-footer clearfix" data-reactid=".0.1.0.0.0.1">
-              <div data-reactid=".0.1.0.0.0.1.0"><div class="col-md-2" data-reactid=".0.1.0.0.0.1.0.0">
+              <div class="panel-footer clearfix">
+              <div><div class="col-md-2">
 
               </div>
-                <div class="col-md-8" data-reactid=".0.1.0.0.0.1.0.1">
+                <div class="col-md-8">
                   {% if loggedin == False %}
-                  <a href="/index" class="btn btn-lg btn-block btn-success" data-reactid=".0.1.0.0.0.1.0.1.0">Login to Play</a>
+                  <a href="/index" class="btn btn-lg btn-block btn-success">Login to Play</a>
                   {% endif %}
                   {% if loggedin == True %}
                   <div class="col-md-6">
                     <b><p id="balance_new">Balance: {{ balanceacc }}</p></b>
                   </div>
                   <div class="col-md-6">
-                    <button class="btn btn-lg btn-block btn-success">Roll</button>
+                    <button class="btn btn-lg btn-block btn-success" id="roll_dice">Roll</button>
                   </div>
                   {% endif %}
                 </div>
               </div>
             </div>
             </div>
-            <div class="text-center" data-reactid=".0.1.0.0.1">
+            <div class="text-center"">
 
             </div>
           </div>
         </div>
-        <div class="col-sm-7" data-reactid=".0.1.1">
-          <div id="chat-box" data-reactid=".0.1.1.0">
-            <div class="panel panel-default" data-reactid=".0.1.1.0.0">
-              <div class="panel-body" data-reactid=".0.1.1.0.0.0">
-                <ul class="chat-list list-unstyled" data-reactid=".0.1.1.0.0.0.0">
-                  <li data-reactid=".0.1.1.0.0.0.0.$4db24b59-b475-4b9a-849a-66af15bffc2f">
-                    <span style="font-family:monospace;" data-reactid=".0.1.1.0.0.0.0.$4db24b59-b475-4b9a-849a-66af15bffc2f.0">[Chat]
+        <div class="col-sm-7">
+          <div id="chat-box">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <ul class="chat-list list-unstyled">
+                  <li>
+                    <span style="font-family:monospace;">[Chat]
                   </li>
                 </ul>
               </div>
-              <div class="panel-footer" data-reactid=".0.1.1.0.0.1">
-                <div class="row" data-reactid=".0.1.1.0.0.1.0">
-                  <div class="col-md-9" data-reactid=".0.1.1.0.0.1.0.0">
-                    <input id="chat-input" class="form-control" type="text" value="" placeholder="Login to chat" disabled="" data-reactid=".0.1.1.0.0.1.0.0.0">
+              <div class="panel-footer">
+                <div class="row">
+                  <div class="col-md-9">
+                    <input id="chat-input" class="form-control" type="text" value="" placeholder="Login to chat" disabled="">
                   </div>
-                  <div class="col-md-3" data-reactid=".0.1.1.0.0.1.0.1">
-                    <button type="button" class="btn btn-default btn-block" disabled="" data-reactid=".0.1.1.0.0.1.0.1.0">Send</button>
+                  <div class="col-md-3">
+                    <button type="button" class="btn btn-default btn-block" disabled="">Send</button>
                   </div>
                 </div>
               </div>
             </div>
-            <p class="text-right text-muted" style="margin-top:-15px;" data-reactid=".0.1.1.0.1">
-              <span data-reactid=".0.1.1.0.1.0">Users online: 0 </span>
-              <button class="btn btn-default btn-xs" data-reactid=".0.1.1.0.1.1">Show</button>
+            <p class="text-right text-muted" style="margin-top:-15px;">
+              <span>Users online: 0 </span>
+              <button class="btn btn-default btn-xs">Show</button>
             </p>
-            <span data-reactid=".0.1.1.0.2"></span>
+            <span></span>
           </div>
         </div>
       </div>
-      <div style="margin-top:15px;" data-reactid=".0.2">
-        <ul class="nav nav-tabs" data-reactid=".0.2.0">
-          <li class="active" data-reactid=".0.2.0.0">
-            <a href="javascript:void(0)" data-reactid=".0.2.0.0.0">All Bets</a>
+      <div style="margin-top:15px;">
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a href="javascript:void(0)">All Bets</a>
           </li>
-          <span data-reactid=".0.2.0.1"></span>
-          <li class="" data-reactid=".0.2.0.2">
-            <a href="javascript:void(0)" data-reactid=".0.2.0.2.0">
-              <span data-reactid=".0.2.0.2.0.0">Faucet </span>
+          <span></span>
+          <li class="">
+            <a href="javascript:void(0)">
+              <span>Faucet </span>
             </a>
           </li>
         </ul>
       </div>
-      <div data-reactid=".0.3">
-        <table class="table" data-reactid=".0.3.0">
-          <thead data-reactid=".0.3.0.0">
-          <tr data-reactid=".0.3.0.0.0">
-            <th data-reactid=".0.3.0.0.0.0">ID</th>
-            <th data-reactid=".0.3.0.0.0.1">Time</th>
-            <th data-reactid=".0.3.0.0.0.2">User</th>
-            <th data-reactid=".0.3.0.0.0.3">Wager</th>
-            <th class="text-right" data-reactid=".0.3.0.0.0.4">Target</th>
-            <th data-reactid=".0.3.0.0.0.5">Outcome</th>
-            <th style="padding-left:50px;" data-reactid=".0.3.0.0.0.6">Profit</th>
+      <div>
+        <table class="table">
+          <thead>
+          <tr>
+            <th >ID</th>
+            <th>Time</th>
+            <th>User</th>
+            <th>Wager</th>
+            <th class="text-right">Target</th>
+            <th>Outcome</th>
+            <th style="padding-left:50px;">Profit</th>
           </tr>
           </thead>
-          <tbody data-reactid=".0.3.0.1">
+          <tbody>
 
           </tbody>
         </table>
       </div>
-      <div class="text-center text-muted" style="margin-top:200px;" data-reactid=".0.4">
+      <div class="text-center text-muted" style="margin-top:200px;">
 
       </div>
     </div>
   </div>
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="footer-manu">
+              <ul>
+                <li><a href="#">Contact us</a></li>
+                <li><a href="howitworks">How it works</a></li>
+                <li><a href="support">Support</a></li>
+                <li><a href="terms">Terms</a></li>
+              </ul>
+            </div>
+            <p>Copyright &copy2016; Design & Developed by Dave. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  <!--Start of Zopim Live Chat Script-->
+<script type="text/javascript">
+window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
+d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
+_.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute("charset","utf-8");
+$.src="//v2.zopim.com/?4F9OI5FJhhYWFI6KBQP5AihGCxis1BBD";z.t=+new Date;$.
+type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
+</script>
+<!--End of Zopim Live Chat Script-->
 
 </body></html>

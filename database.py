@@ -199,3 +199,24 @@ def makeWithdrawl(depkey, depuser, amt, type, user, rsname):
         c.close()
         conn.close()
     return
+
+def checkBalance(user, amt):
+    balance = getBalance(user)
+    if balance >= int(amt):
+        return True
+    return False
+
+def insertBet(user, amt, roll, res):
+    userid = getUserId(user)
+    c, conn = connection()
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    c.execute("INSERT INTO fulfilled_bets (personID, amount, date_time, roll, result) VALUES (%s, %s, %s, %s, %s)", [int(userid), escaper(amt), escaper(st), escaper(roll), escaper(res)])
+    if res == "W":
+        c.execute("UPDATE member_accounts SET balance = balance + %s WHERE personID = %s", [int(escaper(amt)), int(userid)])
+    else:
+        c.execute("UPDATE member_accounts SET balance = balance - %s WHERE personID = %s",
+                  [int(escaper(amt)), int(userid)])
+    conn.commit()
+    conn.close()
+    return getBalance(user)

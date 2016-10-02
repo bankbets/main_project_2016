@@ -1,5 +1,7 @@
 from flask import Flask, render_template, session, redirect, request, flash, jsonify, url_for
-from database import connection, register, checkUser, checkLogin, getBalance, requestDeposit, requestWithdraw, getPreviousRequests, isAdmin, getPendingDeposits, getInfoOnKey, makeDeposit, getPendingWithdraws, makeWithdrawl
+from database import connection, register, checkUser, checkLogin, getBalance, requestDeposit, requestWithdraw, \
+    getPreviousRequests, isAdmin, getPendingDeposits, getInfoOnKey, makeDeposit, getPendingWithdraws, makeWithdrawl, \
+    checkBalance, insertBet
 import os
 from dice import roll
 from MySQLdb import escape_string as escaper
@@ -43,6 +45,19 @@ def check_login():
 def logout():
     session.clear()
     return redirect('/')
+
+@app.route('/roll_dice', methods=['POST'])
+def rollem():
+    amt = request.form['wager_amt']
+    odds = request.form['odds']
+    if checkBalance(getUser(), amt) == False:
+        return amt
+    rollres = roll(getUser(), amt)
+    if rollres > 54:
+        newbal = insertBet(getUser(), amt, rollres, "W")
+    else:
+        newbal = insertBet(getUser(), amt, rollres, "L")
+    return newbal
 
 @app.route('/dice')
 def dice():
